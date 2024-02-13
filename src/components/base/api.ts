@@ -1,3 +1,4 @@
+//тип данных по запросу от сервера
 export type ApiListResponse<Type> = {
     total: number,
     items: Type[]

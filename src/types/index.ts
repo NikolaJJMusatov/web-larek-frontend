@@ -1,40 +1,45 @@
-export interface IProductList {
-    total: number;
-    items: IProductItem[];
-}
-
+//тип данных товара
 export interface IProductItem {
     id: string;
     description: string;
     image: string;
     title: string;
     category: string;
-    price: number;
+    price: number|null;
 }
 
+//состояние страницы
 export interface IAppState {
-    catalog: IProductList;
+    catalog: IProductItem[];
     basket: string[];
     preview: string | null;
     order: IOrder | null;
-    loading: boolean;
 }
 
+//данные из формы доставки и метода оплаты
 export interface IAdressForm {
     payment: string;
     adress: string;
 }
 
-export interface IContactsForm extends IAdressForm  {
+//данные из формы контактов
+export interface IContactsForm  {
     email: string;
     phone: string;
 }
 
-export interface IOrder extends IContactsForm {
+//данные заказа
+export interface IOrder extends IAdressForm, IContactsForm {
     items: string[];
+    total: number;
 }
 
+//данные заказа на отправку серверу
 export interface IOrderResult {
     id: string;
     total: number;
 }
+
+//данные ошибки ввода форм
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
+
