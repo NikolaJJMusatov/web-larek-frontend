@@ -14,6 +14,7 @@ export class Page extends Component<IPage> {
     protected _catalog: HTMLElement;
     protected _wrapper: HTMLElement;
     protected _basket: HTMLElement;
+    
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
 
@@ -31,7 +32,7 @@ export class Page extends Component<IPage> {
     set counter(value: number) {
         this.setText(this._counter, String(value));
     }
-
+    
     //отображает каталог товаров
     set catalog(items: HTMLElement[]) {
         this._catalog.replaceChildren(...items);

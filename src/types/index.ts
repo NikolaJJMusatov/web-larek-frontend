@@ -12,14 +12,13 @@ export interface IProductItem {
 export interface IAppState {
     catalog: IProductItem[];
     basket: string[];
-    preview: string | null;
     order: IOrder | null;
 }
 
 //данные из формы доставки и метода оплаты
 export interface IAdressForm {
     payment: string;
-    adress: string;
+    address: string;
 }
 
 //данные из формы контактов

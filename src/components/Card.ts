@@ -1,20 +1,23 @@
 import {Component} from "./base/Component";
 import {IProductItem} from "../types";
 import {ensureElement, formatNumber} from "../utils/utils";
-import { EventEmitter } from "./base/events";
 
 interface ICardActions {
     onClick: (event: MouseEvent) => void;
 }
 
-export class Card extends Component<IProductItem> {
+interface ICardView extends IProductItem {
+    buttonTitle?: string;
+}
+
+export class Card extends Component<ICardView> {
     protected _title: HTMLElement;
 	protected _description: HTMLElement;
 	protected _category: HTMLElement;
 	protected _price: HTMLElement;
 	protected _image: HTMLImageElement;
 	protected _button: HTMLButtonElement;
-    protected _buttonTitle: HTMLButtonElement;
+    protected _buttonTitle: string;
 
     constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
         super(container);
@@ -24,7 +27,7 @@ export class Card extends Component<IProductItem> {
         this._button = container.querySelector(`.${blockName}__button`);
         this._description = container.querySelector(`.${blockName}__text`);
         this._category = container.querySelector(`.${blockName}__category`);
-        this._price = container.querySelector(`.${blockName}__price`);        
+        this._price = container.querySelector(`.${blockName}__price`);
 
         if (actions?.onClick) {
             if (this._button) {
@@ -33,7 +36,7 @@ export class Card extends Component<IProductItem> {
                 container.addEventListener('click', actions.onClick);
             }
         }
-}
+    }
 
     set id(value: string) {
         this.container.dataset.id = value;
@@ -88,22 +91,21 @@ export class Card extends Component<IProductItem> {
         }
     }
 
-/*  get price() {
-    
-    }*/
-
     set description(value: string) {
         this.setText(this._description, value);
     }
-
-/*    set buttonTitle() {
-
-    }*/
 
     //проверяет цену и делает кнопку покупки неактивной если цена не указана
     disablePriceButton () {
         this.setDisabled(this._button, true);
     }
-}
+
+    set buttonTitle (value: string) {
+        this.setText(this._button, value);
+    }
+};
+
+
+
 
 
