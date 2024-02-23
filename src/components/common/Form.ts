@@ -1,7 +1,6 @@
 import { Component } from "../base/Component";
 import { IEvents } from "../base/events";
-import { ensureElement, ensureAllElements } from "../../utils/utils";
-import { IAdressForm, IContactsForm } from "../../types";
+import { ensureElement } from "../../utils/utils";
 
 interface IFormState {
     valid: boolean;
@@ -58,65 +57,5 @@ export class Form<T> extends Component<IFormState> {
         super.render({valid, errors});
         Object.assign(this, inputs);
         return this.container;
-    }
-}
-
-interface IFormActions {
-    onClick: (button: string) => void;
-}
-
-interface IDeliveryFormView extends IAdressForm {
-    paymentButtons: string[];
-}
-
-export class DeliveryForm extends Form<IDeliveryFormView> {
-    protected _cardButton: HTMLButtonElement;
-    protected _cashButton: HTMLButtonElement;
-    protected _paymentButtons: HTMLButtonElement[];
-
-    constructor(container: HTMLFormElement, protected events: IEvents, actions?: IFormActions) {
-        super(container, events);
-
-        this._cardButton = ensureElement<HTMLButtonElement>('button[name="card"]', container);
-        this._cashButton = ensureElement<HTMLButtonElement>('button[name="cash"]', container);
-        this._paymentButtons = ensureAllElements<HTMLButtonElement>('.button_alt', container);
-
-        this._paymentButtons.forEach(button => {
-            button.addEventListener('click', (evt) => {
-                if (evt.target === this._cardButton) {
-                    this._cardButton.classList.add("button_alt-active");
-                    this._cashButton.classList.remove("button_alt-active");
-                    this.choosePayment('card')
-                } if (evt.target === this._cashButton) {
-                    this._cashButton.classList.add("button_alt-active");
-                    this._cardButton.classList.remove("button_alt-active");
-                    this.choosePayment('cash')    
-                }
-            });
-        })
-    }
-
-    set address(value: string) {
-        (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
-    };
-
-    clearClassButtons () {
-        this._paymentButtons.forEach(button => {
-            button.classList.remove("button_alt-active");
-        })
-    }
-}
-
-export class ContactForm extends Form<IContactsForm> {
-    constructor(container: HTMLFormElement, protected events: IEvents) {
-        super(container, events);
-    }
-
-    set email(value: string) {
-        (this.container.elements.namedItem('email') as HTMLInputElement).value = value;
-    }
-
-    set phone(value: string) {
-        (this.container.elements.namedItem('phone') as HTMLInputElement).value = value;
     }
 }

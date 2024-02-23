@@ -1,14 +1,17 @@
 import './scss/styles.scss';
 
-import {ProductsApi} from "./components/common/ProductsApi";
-import {API_URL, CDN_URL} from "./utils/constants";
-import {EventEmitter} from "./components/base/events";
-import {AppState, CatalogChangeEvent, ProductItem} from "./components/AppData";
-import {Page} from "./components/Page";
-import {Card} from "./components/Card";
-import {Modal} from "./components/common/Modal";
-import {Basket, itemProductBasket} from "./components/common/Basket";
-import {DeliveryForm, ContactForm} from './components/common/Form';
+import { ProductsApi } from "./components/common/ProductsApi";
+import { API_URL, CDN_URL } from "./utils/constants";
+import { EventEmitter } from "./components/base/events";
+import { AppState, CatalogChangeEvent } from "./components/AppData";
+import { IProductItem } from './types';
+import { Page } from "./components/Page";
+import { Card } from "./components/Card";
+import { Modal } from "./components/common/Modal";
+import { Basket, itemProductBasket } from "./components/common/Basket";
+import { DeliveryForm } from './components/common/DeliveryForm';
+import { ContactForm } from './components/common/ContactForm';
+
 import {Success} from './components/common/Success';
 import {cloneTemplate, createElement, ensureElement} from "./utils/utils";
 import {IAdressForm, IContactsForm} from './types';
@@ -57,12 +60,18 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 });
 
 // Открыть продукт
-events.on('card:select', (item: ProductItem) => {
+events.on('card:select', (item: IProductItem) => {
     const card = new Card('card', cloneTemplate(cardPreviewTemplate), {
         onClick: () => {
 			card.buttonTitle = appData.findInBasket(item)? 'В корзину' : 'Удалить из корзины';
-			events.emit('add:basket', item);
-		},
+
+            if (!appData.findInBasket(item)) {
+                appData.addToBasket(item);
+            } else {
+                appData.removeFromBasket(item);
+            };
+            events.emit('basket:change', item);
+		}
 	});
     
     modal.render({
@@ -86,15 +95,6 @@ events.on('basket:open', () => {
     });
 });
 
-//добавление/удаление товара в корзину
-events.on('add:basket', (item: ProductItem) => {
-    if (!appData.findInBasket(item)) {
-		appData.addToBasket(item);
-	} else {
-		appData.removeFromBasket(item);
-	}
-});
-
 //счетчик корзины
 events.on('counter:changed', () => {
     page.counter = appData.basket.length;
@@ -105,7 +105,10 @@ events.on('basket:changed', () => {
     page.counter = appData.basket.length;
 	basket.items = appData.basket.map((item, index) => {
 		const itemProduct = new itemProductBasket('card', cloneTemplate(cardBasketTemplate), {
-			onClick: () => events.emit('add:basket', item),
+            onClick: () => {
+                appData.removeFromBasket(item);
+                events.emit('basket:change', item);
+            }
 		});
 
 		return itemProduct.render({
@@ -122,7 +125,6 @@ events.on('basket:changed', () => {
 	};
 
     basket.total = appData.getTotal();
-    appData.setTotal(basket.total);
 
     const itemsId = appData.basket.map((item) => item.id);
     appData.setItems(itemsId);
@@ -133,7 +135,7 @@ events.on('addressForm:open', () => {
 	if (appData.basket.length > 0) {
 		modal.render({
 			content: delivery.render({
-				address: '',
+				address: (appData.order.address)? appData.order.address : '',
 				valid: false,
 				errors: [],
 			}),
@@ -147,8 +149,8 @@ events.on('addressForm:open', () => {
 events.on('order:submit', () => {
 	modal.render({
 		content: contacts.render({
-			phone: '',
-			email: '',
+			phone: (appData.order.phone)? appData.order.phone : '',
+			email: (appData.order.email)? appData.order.email : '',
 			valid: false,
 			errors: [],
 		}),
@@ -157,6 +159,8 @@ events.on('order:submit', () => {
 
 //отправить форму всего заказа
 events.on('contacts:submit', () => {
+    appData.setTotal(basket.total);
+
     api.orderProducts(appData.order)
         .then((result) => {
             const success = new Success(cloneTemplate(successTemplate), {
