@@ -48,10 +48,6 @@ export class Form<T> extends Component<IFormState> {
         });
     }
 
-    protected choosePayment (value: string) {
-        this.events.emit('payment:change', { field: 'payment', value });
-    };
-
     render(state: Partial<T> & IFormState) {
         const {valid, errors, ...inputs} = state;
         super.render({valid, errors});

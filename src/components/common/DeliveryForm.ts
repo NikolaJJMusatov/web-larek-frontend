@@ -46,5 +46,10 @@ export class DeliveryForm extends Form<IDeliveryFormView> {
         this._paymentButtons.forEach(button => {
             button.classList.remove("button_alt-active");
         })
-    }
+    };
+
+    choosePayment (value: string) {
+        this.events.emit('payment:change', { field: 'payment', value });
+    };
+
 }

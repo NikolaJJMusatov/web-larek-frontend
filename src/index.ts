@@ -70,7 +70,6 @@ events.on('card:select', (item: IProductItem) => {
             } else {
                 appData.removeFromBasket(item);
             };
-            events.emit('basket:change', item);
 		}
 	});
     
@@ -107,7 +106,6 @@ events.on('basket:changed', () => {
 		const itemProduct = new itemProductBasket('card', cloneTemplate(cardBasketTemplate), {
             onClick: () => {
                 appData.removeFromBasket(item);
-                events.emit('basket:change', item);
             }
 		});
 

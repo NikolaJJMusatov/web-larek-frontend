@@ -300,6 +300,7 @@ constructor(blockName: string, container: HTMLElement, actions?: ICardActions) /
 - set/get title (управляет названием товара)
 - set image (устанавливает изображение товара)
 - set description (устанавливает описание товара)
+- set/get category (установить класс на категорию товара /получить наименование категории)
 - set price (управляет ценой товара)
 - set buttonTitle (управляет текстом на кнопке карточки)
 - disablePriceButton (проверяет цену и делает кнопку покупки неактивной если цена не указана)
@@ -333,7 +334,6 @@ constructor(container: HTMLFormElement, events: IEvents)
 - onInputChange (обработчик полей форм)
 - set valid (управляет кнопкой отправки формы в зависимости от валидации)
 - set errors (устанавливает ошибки валидации формы)
-- choosePayment (управляет методом оплаты товара)
 - render (рендерит форму)
 
 ### Класс DeliveryForm наследуется от Form
@@ -343,6 +343,8 @@ constructor(container: HTMLFormElement, events: IEvents, actions?: IFormActions)
 ```
 методы:
 - set address (устанавливает адрес доставки)
+- clearClassButtons (сбрасывает активный класс кнопок оплаты)
+- choosePayment (управляет методом оплаты товара)
 
 ### Класс ContactForm наследуется от Form
 (используется для отображения и управления формой ввода email и телефона)
@@ -365,12 +367,14 @@ constructor(container: HTMLElement, actions?: ISuccessActions)
 - modal:open (открытие модального окна)
 - modal:close (закрытие модального окна)
 - items:changed (изменение товаров в каталоге)
+- card:select (выбрана карточка товара)
 - basket:open (открытие корзины)
 - basket:changed (изменение корзины)
 - counter:changed (изменение счетчика товаров корзины)
-- delivery:ready (готовность формы доставки к отправке)
-- contact:ready (готовность формы контактов к отправке)
-- order:submit (отправка формы доставки)
-- contacts:submit (отправка формы контактов)
+- addressForm:open (открыть форму способа оплаты и адреса доставки)
+- order:submit (отпрыть форму контактов)
+- contacts:submit (отправка формы всего заказа)
+- formErrorsDelivery:change (изменение валидации доставки)
+- formErrorsContacts:change (изменение валидации контактов)
 
 [Ссылка на репозиторий Git](https://github.com/NikolaJJMusatov/web-larek-frontend.git)
